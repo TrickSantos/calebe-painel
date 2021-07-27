@@ -1,10 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react'
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
-  SearchOutlined
-} from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -21,7 +16,8 @@ import {
   Table,
   Tag,
   Tooltip,
-  Typography
+  Typography,
+  Upload
 } from 'antd'
 import { format, parseISO } from 'date-fns'
 import { Container } from '../Components'
@@ -33,6 +29,13 @@ import { AxiosError } from 'axios'
 
 const { Column } = Table
 const { Title, Text } = Typography
+
+const UploadButton = (
+  <div>
+    <PlusOutlined />
+    <div style={{ marginTop: 8 }}>Foto</div>
+  </div>
+)
 
 export default function Desafios(): ReactElement {
   const { control, handleSubmit, reset } = useForm()
@@ -304,20 +307,31 @@ export default function Desafios(): ReactElement {
               <Controller
                 name="cover"
                 control={control}
-                render={({
-                  field: { value, onBlur, onChange },
-                  fieldState: { error }
-                }) => (
-                  <>
-                    <Input
-                      size="large"
-                      placeholder="Título"
-                      value={value}
-                      onBlur={onBlur}
-                      onChange={onChange}
-                    />
-                    {error && <Text type="danger">{error.message}</Text>}
-                  </>
+                render={({ field: { value, onChange } }) => (
+                  <Upload
+                    onChange={({ file, fileList }) => {
+                      if (file.status !== 'uploading') {
+                        console.log(file, fileList)
+                      }
+                      if (file.status === 'done') {
+                        onChange(file.response.url)
+                      } else if (file.status === 'error') {
+                        message.error(`${file.name} file upload failed.`)
+                      }
+                    }}
+                    showUploadList={false}
+                    listType="picture-card"
+                    multiple={false}
+                    accept="image/png, image/jpeg"
+                    action={`${process.env.REACT_APP_API}/upload`}
+                    data={{ pasta: 'devocional' }}
+                  >
+                    {value ? (
+                      <img src={value} alt="avatar" style={{ width: '100%' }} />
+                    ) : (
+                      UploadButton
+                    )}
+                  </Upload>
                 )}
               />
             </Col>

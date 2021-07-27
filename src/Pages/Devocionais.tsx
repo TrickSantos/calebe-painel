@@ -14,7 +14,8 @@ import {
   Spin,
   Table,
   Tooltip,
-  Typography
+  Typography,
+  Upload
 } from 'antd'
 import { AxiosError } from 'axios'
 import { format, parseISO } from 'date-fns'
@@ -27,8 +28,15 @@ import { IDevocional, IError } from '../Types'
 const { Title, Text } = Typography
 const { Column } = Table
 
+const UploadButton = (
+  <div>
+    <PlusOutlined />
+    <div style={{ marginTop: 8 }}>Foto</div>
+  </div>
+)
+
 export default function Devocionais(): ReactElement {
-  const { control, handleSubmit, reset } = useForm()
+  const { control, handleSubmit, reset, watch } = useForm()
   const [loading, setLoading] = useState(false)
   const [devocionais, setdevocionais] = useState<IDevocional[]>(
     [] as IDevocional[]
@@ -270,14 +278,31 @@ export default function Devocionais(): ReactElement {
               <Controller
                 name="cover"
                 control={control}
-                render={({ field: { value, onBlur, onChange } }) => (
-                  <Input
-                    size="large"
-                    placeholder="Título"
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                  />
+                render={({ field: { value, onChange } }) => (
+                  <Upload
+                    onChange={({ file, fileList }) => {
+                      if (file.status !== 'uploading') {
+                        console.log(file, fileList)
+                      }
+                      if (file.status === 'done') {
+                        onChange(file.response.url)
+                      } else if (file.status === 'error') {
+                        message.error(`${file.name} file upload failed.`)
+                      }
+                    }}
+                    showUploadList={false}
+                    listType="picture-card"
+                    multiple={false}
+                    accept="image/png, image/jpeg"
+                    action={`${process.env.REACT_APP_API}/upload`}
+                    data={{ pasta: 'devocional' }}
+                  >
+                    {value ? (
+                      <img src={value} alt="avatar" style={{ width: '100%' }} />
+                    ) : (
+                      UploadButton
+                    )}
+                  </Upload>
                 )}
               />
             </Col>

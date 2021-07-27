@@ -22,4 +22,24 @@ export default createGlobalStyle`
     .marginTopBottom{
         margin: 1rem 0;
     }
+
+    .uploadButton {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid rgba(23, 18, 112, 0.4);
+        padding: 2em;
+        height: 80px;
+        width: 120px;
+        margin: 1em 0;
+        overflow: hidden;
+
+        input {
+        display: none;
+        }
+        &:hover{
+        cursor: pointer;
+        }
+    }
 `

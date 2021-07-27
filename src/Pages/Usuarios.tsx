@@ -114,7 +114,7 @@ export default function Usuarios(): ReactElement {
             </Button>
           ]}
         >
-          <Descriptions size="middle" column={3}>
+          <Descriptions size="middle" column={2}>
             <Item label="Distrito">{equipe?.igreja.distrito.nome}</Item>
             <Item label="Igreja">{equipe?.igreja.nome}</Item>
             <Item label="Instagram">@{equipe?.instagram}</Item>
