@@ -1,5 +1,10 @@
 import React, { ReactElement, useEffect, useState } from 'react'
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  UploadOutlined
+} from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -11,6 +16,7 @@ import {
   message,
   Popconfirm,
   Row,
+  Select,
   Space,
   Spin,
   Table,
@@ -26,6 +32,7 @@ import { IDesafio, IError } from '../Types'
 import { Controller, useForm } from 'react-hook-form'
 import DatePicker from '../Components/DatePicker'
 import { AxiosError } from 'axios'
+import { disabledDate } from '../Service/utils'
 
 const { Column } = Table
 const { Title, Text } = Typography
@@ -41,6 +48,7 @@ export default function Desafios(): ReactElement {
   const { control, handleSubmit, reset } = useForm()
   const [loading, setLoading] = useState(false)
   const [desafios, setDesafios] = useState<IDesafio[]>([] as IDesafio[])
+  const [tipo, setTipo] = useState<'video' | 'imagem' | 'nenhum'>('nenhum')
   const [drawer, setDrawer] = useState<'none' | 'insert' | 'update'>('none')
   const [desafio, setDesafio] = useState(0)
   const [load, setLoad] = useState(false)
@@ -96,6 +104,7 @@ export default function Desafios(): ReactElement {
   const onClose = () => {
     reset({})
     setDrawer('none')
+    setTipo('nenhum')
   }
 
   return (
@@ -167,6 +176,13 @@ export default function Desafios(): ReactElement {
                             liberacao: parseISO(record.liberacao),
                             encerramento: parseISO(record.encerramento)
                           })
+                          if (record.video) {
+                            setTipo('video')
+                          } else {
+                            if (record.cover) {
+                              setTipo('imagem')
+                            }
+                          }
                           setDrawer('update')
                         }}
                       />
@@ -205,7 +221,7 @@ export default function Desafios(): ReactElement {
         visible={drawer !== 'none'}
         onClose={onClose}
         destroyOnClose
-        width={450}
+        width={400}
       >
         <Spin spinning={waiting}>
           <Row>
@@ -232,6 +248,19 @@ export default function Desafios(): ReactElement {
                   </>
                 )}
               />
+            </Col>
+            <Col span={24}>
+              <Title level={4}>Tipo de conteúdo</Title>
+              <Select
+                style={{ width: '100%' }}
+                size="large"
+                value={tipo}
+                onChange={value => setTipo(value)}
+              >
+                <Select.Option value="nenhum">Somente texto</Select.Option>
+                <Select.Option value="video">Vídeo</Select.Option>
+                <Select.Option value="imagem">Imagem</Select.Option>
+              </Select>
             </Col>
             <Col span={24}>
               <Title level={4}>Descrição</Title>
@@ -280,61 +309,79 @@ export default function Desafios(): ReactElement {
                 )}
               />
             </Col>
-            <Col span={24}>
-              <Title level={4}>Vídeo</Title>
-              <Controller
-                name="video"
-                control={control}
-                render={({
-                  field: { value, onBlur, onChange },
-                  fieldState: { error }
-                }) => (
-                  <>
-                    <Input
-                      size="large"
-                      placeholder="Link do video"
-                      value={value}
-                      onBlur={onBlur}
-                      onChange={onChange}
-                    />
-                    {error && <Text type="danger">{error.message}</Text>}
-                  </>
-                )}
-              />
-            </Col>
-            <Col span={24}>
-              <Title level={4}>Imagem</Title>
-              <Controller
-                name="cover"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <Upload
-                    onChange={({ file, fileList }) => {
-                      if (file.status !== 'uploading') {
-                        console.log(file, fileList)
-                      }
-                      if (file.status === 'done') {
-                        onChange(file.response.url)
-                      } else if (file.status === 'error') {
-                        message.error(`${file.name} file upload failed.`)
-                      }
-                    }}
-                    showUploadList={false}
-                    listType="picture-card"
-                    multiple={false}
-                    accept="image/png, image/jpeg"
-                    action={`${process.env.REACT_APP_API}/upload`}
-                    data={{ pasta: 'devocional' }}
-                  >
-                    {value ? (
-                      <img src={value} alt="avatar" style={{ width: '100%' }} />
-                    ) : (
-                      UploadButton
-                    )}
-                  </Upload>
-                )}
-              />
-            </Col>
+            {tipo === 'video' && (
+              <Col span={24}>
+                <Title level={4}>Vídeo</Title>
+                <Controller
+                  name="video"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Upload
+                      onChange={({ file, fileList }) => {
+                        if (file.status !== 'uploading') {
+                          console.log(file, fileList)
+                        }
+                        if (file.status === 'done') {
+                          onChange(file.response.url)
+                        } else if (file.status === 'error') {
+                          message.error(
+                            `${file.name} falha ao carregar arquivo.`
+                          )
+                        }
+                      }}
+                      listType="picture"
+                      multiple={false}
+                      accept="video/*"
+                      action={`${process.env.REACT_APP_API}/upload`}
+                      data={{ pasta: 'devocional' }}
+                    >
+                      <Button icon={<UploadOutlined />}>Enviar vídeo</Button>
+                    </Upload>
+                  )}
+                />
+              </Col>
+            )}
+            {tipo === 'imagem' && (
+              <Col span={24}>
+                <Title level={4}>Imagem</Title>
+                <Controller
+                  name="cover"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Upload
+                      onChange={({ file, fileList }) => {
+                        if (file.status !== 'uploading') {
+                          console.log(file, fileList)
+                        }
+                        if (file.status === 'done') {
+                          onChange(file.response.url)
+                        } else if (file.status === 'error') {
+                          message.error(
+                            `${file.name} falha ao carregar arquivo.`
+                          )
+                        }
+                      }}
+                      showUploadList={false}
+                      listType="picture-card"
+                      multiple={false}
+                      accept="image/png, image/jpeg"
+                      action={`${process.env.REACT_APP_API}/upload`}
+                      data={{ pasta: 'desafios' }}
+                    >
+                      {value ? (
+                        <img
+                          src={value}
+                          alt="avatar"
+                          style={{ width: '100%' }}
+                        />
+                      ) : (
+                        UploadButton
+                      )}
+                    </Upload>
+                  )}
+                />
+              </Col>
+            )}
             <Col span={24}>
               <Title level={4}>Data de liberação</Title>
               <Controller
@@ -349,6 +396,7 @@ export default function Desafios(): ReactElement {
                       style={{ width: '100%' }}
                       value={value}
                       onChange={onChange}
+                      disabledDate={disabledDate}
                     />
                     {error && <Text type="danger">{error.message}</Text>}
                   </>
@@ -369,6 +417,7 @@ export default function Desafios(): ReactElement {
                       style={{ width: '100%' }}
                       value={value}
                       onChange={onChange}
+                      disabledDate={disabledDate}
                     />
                     {error && <Text type="danger">{error.message}</Text>}
                   </>

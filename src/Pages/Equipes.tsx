@@ -10,7 +10,7 @@ import {
   Tooltip,
   Typography
 } from 'antd'
-import { SearchOutlined, EditOutlined } from '@ant-design/icons'
+import { SearchOutlined } from '@ant-design/icons'
 import { IEquipe } from '../Types'
 import api from '../Service/api'
 import { useHistory } from 'react-router-dom'
@@ -80,9 +80,6 @@ export default function Equipes(): ReactElement {
                         icon={<SearchOutlined />}
                         onClick={() => history.push(`/equipes/${id}`)}
                       />
-                    </Tooltip>
-                    <Tooltip title="Editar">
-                      <Button type="text" icon={<EditOutlined />} />
                     </Tooltip>
                   </Space>
                 )}

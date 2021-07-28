@@ -22,7 +22,6 @@ const Recuperar: React.FC = () => {
 
   const onSubmit = async (data: { password: string }) => {
     try {
-      console.log(token)
       await api.put(`/usuario/${id}`, data).then(() => {
         localStorage.clear()
         reset({})
@@ -117,7 +116,10 @@ const Recuperar: React.FC = () => {
                 size="large"
                 type="text"
                 block
-                onClick={() => history.push('/')}
+                onClick={() => {
+                  localStorage.clear()
+                  history.push('/')
+                }}
               >
                 Ir para login?
               </Button>

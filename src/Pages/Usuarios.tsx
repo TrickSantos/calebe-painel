@@ -70,12 +70,14 @@ export default function Usuarios(): ReactElement {
         await api.post('/usuario', { ...data, equipeId }).then(() => {
           setLoad(!load)
           message.success('Cadastrado com sucesso!')
+          onClose()
         })
       }
       if (drawer === 'update') {
         await api.put(`/usuario/${usuario}`, { ...data, equipeId }).then(() => {
           setLoad(!load)
           message.success('Atualizado com sucesso!')
+          onClose()
         })
       }
     } catch (error) {
@@ -153,12 +155,7 @@ export default function Usuarios(): ReactElement {
           </Col>
         </Row>
       </Skeleton>
-      <Drawer
-        visible={drawer !== 'none'}
-        destroyOnClose
-        width={450}
-        onClose={onClose}
-      >
+      <Drawer visible={drawer !== 'none'} destroyOnClose onClose={onClose}>
         <Spin spinning={waiting}>
           <Row>
             <Col span={24}>

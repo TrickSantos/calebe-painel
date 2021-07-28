@@ -1,5 +1,10 @@
 import React, { ReactElement, useEffect, useState } from 'react'
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  UploadOutlined
+} from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -10,6 +15,7 @@ import {
   message,
   Popconfirm,
   Row,
+  Select,
   Space,
   Spin,
   Table,
@@ -24,6 +30,7 @@ import { Container } from '../Components'
 import DatePicker from '../Components/DatePicker'
 import api from '../Service/api'
 import { IDevocional, IError } from '../Types'
+import { disabledDate } from '../Service/utils'
 
 const { Title, Text } = Typography
 const { Column } = Table
@@ -36,8 +43,9 @@ const UploadButton = (
 )
 
 export default function Devocionais(): ReactElement {
-  const { control, handleSubmit, reset, watch } = useForm()
+  const { control, handleSubmit, reset } = useForm()
   const [loading, setLoading] = useState(false)
+  const [tipo, setTipo] = useState<'video' | 'imagem' | 'nenhum'>('nenhum')
   const [devocionais, setdevocionais] = useState<IDevocional[]>(
     [] as IDevocional[]
   )
@@ -96,6 +104,7 @@ export default function Devocionais(): ReactElement {
   const onClose = () => {
     reset({})
     setDrawer('none')
+    setTipo('nenhum')
   }
 
   return (
@@ -157,6 +166,13 @@ export default function Devocionais(): ReactElement {
                             ...record,
                             liberacao: parseISO(record.liberacao)
                           })
+                          if (record.video) {
+                            setTipo('video')
+                          } else {
+                            if (record.cover) {
+                              setTipo('imagem')
+                            }
+                          }
                           setDrawer('update')
                         }}
                       />
@@ -195,7 +211,7 @@ export default function Devocionais(): ReactElement {
         visible={drawer !== 'none'}
         onClose={onClose}
         destroyOnClose
-        width={450}
+        width={400}
       >
         <Spin spinning={waiting}>
           <Row>
@@ -224,88 +240,129 @@ export default function Devocionais(): ReactElement {
               />
             </Col>
             <Col span={24}>
-              <Title level={4}>Verso</Title>
-              <Controller
-                name="verso"
-                control={control}
-                render={({ field: { value, onBlur, onChange } }) => (
-                  <Input.TextArea
-                    autoSize={{ maxRows: 4 }}
-                    size="large"
-                    placeholder="Título"
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                  />
-                )}
-              />
+              <Title level={4}>Tipo de conteúdo</Title>
+              <Select
+                style={{ width: '100%' }}
+                size="large"
+                value={tipo}
+                onChange={value => setTipo(value)}
+              >
+                <Select.Option value="nenhum">Somente texto</Select.Option>
+                <Select.Option value="video">Vídeo</Select.Option>
+                <Select.Option value="imagem">Imagem</Select.Option>
+              </Select>
             </Col>
-            <Col span={24}>
-              <Title level={4}>Descrição</Title>
-              <Controller
-                name="conteudo"
-                control={control}
-                render={({ field: { value, onBlur, onChange } }) => (
-                  <Input.TextArea
-                    autoSize={{ maxRows: 8 }}
-                    size="large"
-                    placeholder="Descrição"
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                  />
-                )}
-              />
-            </Col>
-            <Col span={24}>
-              <Title level={4}>Vídeo</Title>
-              <Controller
-                name="video"
-                control={control}
-                render={({ field: { value, onBlur, onChange } }) => (
-                  <Input
-                    size="large"
-                    placeholder="Link do video"
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                  />
-                )}
-              />
-            </Col>
-            <Col span={24}>
-              <Title level={4}>Imagem</Title>
-              <Controller
-                name="cover"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <Upload
-                    onChange={({ file, fileList }) => {
-                      if (file.status !== 'uploading') {
-                        console.log(file, fileList)
-                      }
-                      if (file.status === 'done') {
-                        onChange(file.response.url)
-                      } else if (file.status === 'error') {
-                        message.error(`${file.name} file upload failed.`)
-                      }
-                    }}
-                    showUploadList={false}
-                    listType="picture-card"
-                    multiple={false}
-                    accept="image/png, image/jpeg"
-                    action={`${process.env.REACT_APP_API}/upload`}
-                    data={{ pasta: 'devocional' }}
-                  >
-                    {value ? (
-                      <img src={value} alt="avatar" style={{ width: '100%' }} />
-                    ) : (
-                      UploadButton
-                    )}
-                  </Upload>
-                )}
-              />
-            </Col>
+            {tipo !== 'video' && (
+              <Col span={24}>
+                <Title level={4}>Verso</Title>
+                <Controller
+                  name="verso"
+                  control={control}
+                  render={({ field: { value, onBlur, onChange } }) => (
+                    <Input.TextArea
+                      autoSize={{ maxRows: 4 }}
+                      size="large"
+                      placeholder="Título"
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+              </Col>
+            )}
+            {tipo !== 'video' && (
+              <Col span={24}>
+                <Title level={4}>Descrição</Title>
+                <Controller
+                  name="conteudo"
+                  control={control}
+                  render={({ field: { value, onBlur, onChange } }) => (
+                    <Input.TextArea
+                      autoSize={{ maxRows: 8 }}
+                      size="large"
+                      placeholder="Descrição"
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+              </Col>
+            )}
+            {tipo === 'video' && (
+              <Col span={24}>
+                <Title level={4}>Vídeo</Title>
+                <Controller
+                  name="video"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Upload
+                      onChange={({ file, fileList }) => {
+                        if (file.status !== 'uploading') {
+                          console.log(file, fileList)
+                        }
+                        if (file.status === 'done') {
+                          onChange(file.response.url)
+                        } else if (file.status === 'error') {
+                          message.error(
+                            `${file.name} falha ao carregar arquivo.`
+                          )
+                        }
+                      }}
+                      listType="picture"
+                      multiple={false}
+                      accept="video/*"
+                      action={`${process.env.REACT_APP_API}/upload`}
+                      data={{ pasta: 'devocional' }}
+                    >
+                      <Button icon={<UploadOutlined />}>Enviar vídeo</Button>
+                    </Upload>
+                  )}
+                />
+              </Col>
+            )}
+            {tipo === 'imagem' && (
+              <Col span={24}>
+                <Title level={4}>Imagem</Title>
+                <Controller
+                  name="cover"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Upload
+                      onChange={({ file, fileList }) => {
+                        if (file.status !== 'uploading') {
+                          console.log(file, fileList)
+                        }
+                        if (file.status === 'done') {
+                          onChange(file.response.url)
+                        } else if (file.status === 'error') {
+                          message.error(
+                            `${file.name} falha ao carregar arquivo.`
+                          )
+                        }
+                      }}
+                      showUploadList={false}
+                      listType="picture-card"
+                      multiple={false}
+                      accept="image/png, image/jpeg"
+                      action={`${process.env.REACT_APP_API}/upload`}
+                      data={{ pasta: 'devocional' }}
+                    >
+                      {value ? (
+                        <img
+                          src={value}
+                          alt="avatar"
+                          style={{ width: '100%' }}
+                        />
+                      ) : (
+                        UploadButton
+                      )}
+                    </Upload>
+                  )}
+                />
+              </Col>
+            )}
             <Col span={24}>
               <Title level={4}>Data de liberação</Title>
               <Controller
@@ -323,6 +380,7 @@ export default function Devocionais(): ReactElement {
                       style={{ width: '100%' }}
                       value={value}
                       onChange={onChange}
+                      disabledDate={disabledDate}
                     />
                     {error && <Text type="danger">{error.message}</Text>}
                   </>

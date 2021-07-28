@@ -5,7 +5,7 @@ import AuthContext from '../Context/AuthContext'
 const ProtectedRoute: React.FC<RouteProps> = props => {
   const { signed } = useContext(AuthContext)
 
-  return signed ? <Route {...props} /> : <Redirect to="/" />
+  return signed ? <Route {...props} /> : <Redirect to={{ pathname: '/' }} />
 }
 
 export default ProtectedRoute

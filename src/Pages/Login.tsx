@@ -18,7 +18,7 @@ const Login: React.FC = () => {
 
   const onSubmit = async (data: ILogin) => {
     try {
-      await login(data).then(() => history.replace('/usuarios'))
+      await login(data).then(() => history.replace('/home'))
     } catch (error) {
       const { response } = error
       if (response) {

@@ -14,13 +14,14 @@ import Usuarios from '../Pages/Usuarios'
 import ProtectedRoute from './protected'
 import Title from 'antd/lib/typography/Title'
 import AuthContext from '../Context/AuthContext'
+import Home from '../Pages/Home'
 
 const Routes: React.FC = () => {
   const history = useHistory()
   const { logout, user } = useContext(AuthContext)
   return (
     <Layout style={{ height: '100%' }}>
-      <Layout.Sider theme="light">
+      <Layout.Sider theme="light" breakpoint="xl" collapsedWidth="0">
         <Row justify="center" align="middle">
           <Col>
             <Title level={3}>Painel Calebe</Title>
@@ -75,6 +76,7 @@ const Routes: React.FC = () => {
       <Layout.Content style={{ margin: '1rem' }}>
         <Switch>
           <ProtectedRoute path="/equipes" exact component={Equipes} />
+          <ProtectedRoute path="/home" exact component={Home} />
           <ProtectedRoute
             path="/equipes/:equipeId"
             exact
