@@ -97,6 +97,7 @@ const CadastroEquipe: React.FC = () => {
                           size="large"
                           placeholder="Instagram da equipe"
                           value={value}
+                          prefix="@"
                           onBlur={onBlur}
                           onChange={onChange}
                         />

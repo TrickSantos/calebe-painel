@@ -27,6 +27,7 @@ import { Controller, useForm } from 'react-hook-form'
 import NumberFormat, { NumberFormatValues } from 'react-number-format'
 import { formatCPF } from '@brazilian-utils/brazilian-utils'
 import { Container } from '../Components'
+import { useAuth } from '../Context/AuthContext'
 
 const { Column } = Table
 const { Item } = Descriptions
@@ -39,6 +40,7 @@ interface ParamTypes {
 export default function Usuarios(): ReactElement {
   const { control, handleSubmit, reset } = useForm({ mode: 'all' })
   const { equipeId } = useParams<ParamTypes>()
+  const { user } = useAuth()
   const [equipe, setEquipe] = useState<IEquipe | null>(null)
   const [drawer, setDrawer] = useState<'none' | 'insert' | 'update'>('none')
   const [usuario, setUsuario] = useState(0)
@@ -260,6 +262,12 @@ export default function Usuarios(): ReactElement {
                       <Select.Option key="lider" value="lider">
                         Líder
                       </Select.Option>
+                      {(user?.perfil === 'admin' ||
+                        user?.perfil === 'pastor') && (
+                        <Select.Option key="pastor" value="pastor">
+                          Pastor
+                        </Select.Option>
+                      )}
                     </Select>
                     {error && <Text type="danger">{error.message}</Text>}
                   </>

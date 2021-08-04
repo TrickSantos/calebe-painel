@@ -1,5 +1,5 @@
 import { AxiosError, AxiosResponse } from 'axios'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState, useContext } from 'react'
 import api from '../Service/api'
 import { ILogin, IResponseLogin, IUsuario } from '../Types'
 
@@ -80,6 +80,11 @@ export const AuthProvider: React.FunctionComponent = ({ children }) => {
       {children}
     </AuthContext.Provider>
   )
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  return context
 }
 
 export default AuthContext
