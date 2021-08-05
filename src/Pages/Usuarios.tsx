@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react'
-import { EditOutlined, PlusOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   Button,
   Card,
@@ -146,6 +146,19 @@ export default function Usuarios(): ReactElement {
                             setUsuario(membro.id)
                             reset(membro)
                             setDrawer('update')
+                          }}
+                        />
+                        <Button
+                          type="text"
+                          icon={<DeleteOutlined />}
+                          onClick={async () => {
+                            setLoading(true)
+                            await api
+                              .delete(`/usuario/${membro.id}`)
+                              .then(() => {
+                                setLoad(!load)
+                              })
+                              .finally(() => setLoading(false))
                           }}
                         />
                       </Tooltip>
