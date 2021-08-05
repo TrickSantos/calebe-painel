@@ -148,6 +148,8 @@ export default function Usuarios(): ReactElement {
                             setDrawer('update')
                           }}
                         />
+                      </Tooltip>
+                      <Tooltip title="Apagar membro">
                         <Button
                           type="text"
                           icon={<DeleteOutlined />}
