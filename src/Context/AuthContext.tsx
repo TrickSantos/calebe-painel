@@ -82,7 +82,7 @@ export const AuthProvider: React.FunctionComponent = ({ children }) => {
   )
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextData {
   const context = useContext(AuthContext)
   return context
 }

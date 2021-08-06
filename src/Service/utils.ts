@@ -1,5 +1,5 @@
-import { endOfDay } from 'date-fns'
+import { startOfDay } from 'date-fns'
 
 export function disabledDate(current: Date): boolean {
-  return current && current < endOfDay(new Date())
+  return current < startOfDay(new Date())
 }
