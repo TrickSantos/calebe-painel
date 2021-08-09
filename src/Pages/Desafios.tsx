@@ -3,6 +3,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
+  SearchOutlined,
   UploadOutlined
 } from '@ant-design/icons'
 import {
@@ -33,6 +34,7 @@ import { Controller, useForm } from 'react-hook-form'
 import DatePicker from '../Components/DatePicker'
 import { AxiosError } from 'axios'
 import { disabledDate } from '../Service/utils'
+import { useHistory } from 'react-router-dom'
 
 const { Column } = Table
 const { Title, Text } = Typography
@@ -45,6 +47,7 @@ const UploadButton = (
 )
 
 export default function Desafios(): ReactElement {
+  const history = useHistory()
   const { control, handleSubmit, reset } = useForm()
   const [loading, setLoading] = useState(false)
   const [desafios, setDesafios] = useState<IDesafio[]>([] as IDesafio[])
@@ -165,6 +168,13 @@ export default function Desafios(): ReactElement {
                 key="actions"
                 render={(_, record) => (
                   <Space>
+                    <Tooltip title="Ver respostas">
+                      <Button
+                        type="text"
+                        icon={<SearchOutlined />}
+                        onClick={() => history.push(`/resposta/${record.id}`)}
+                      />
+                    </Tooltip>
                     <Tooltip title="Editar">
                       <Button
                         type="text"

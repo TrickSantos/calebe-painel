@@ -15,6 +15,7 @@ import ProtectedRoute from './protected'
 import Title from 'antd/lib/typography/Title'
 import AuthContext from '../Context/AuthContext'
 import Home from '../Pages/Home'
+import Respostas from '../Pages/Respostas'
 
 const Routes: React.FC = () => {
   const history = useHistory()
@@ -88,6 +89,11 @@ const Routes: React.FC = () => {
             component={Usuarios}
           />
           <ProtectedRoute path="/desafios" exact component={Desafios} />
+          <ProtectedRoute
+            path="/resposta/:desafioId"
+            exact
+            component={Respostas}
+          />
           <ProtectedRoute path="/devocionais" exact component={Devocionais} />
         </Switch>
       </Layout.Content>

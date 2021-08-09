@@ -35,6 +35,7 @@ export interface IEquipe {
   igrejaId: number
   igreja: IIgreja
   membros: IUsuario[]
+  resposta: IResposta
 }
 
 export interface ILogin {
@@ -56,6 +57,18 @@ export interface IDesafio {
   conteudo: string
   liberacao: string
   encerramento: string
+}
+
+export interface IResposta {
+  id: number
+  pontos: number
+  respostas: {
+    resposta: string
+  }[]
+  aprovado: boolean
+  aprovadoEm: string
+  equipeId: number
+  desafioId: number
 }
 
 export interface IDevocional {
