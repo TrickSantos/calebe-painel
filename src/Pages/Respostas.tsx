@@ -131,6 +131,19 @@ export default function Respostas(): ReactElement {
             >
               <Column<IEquipe> title="Nome" dataIndex="nome" key="nome" />
               <Column<IEquipe>
+                title="Status"
+                dataIndex="aprovado"
+                key="aprovado"
+                render={(_, { resposta: { aprovado } }) =>
+                  aprovado ? 'Aprovado' : 'Não aprovado ainda'
+                }
+                filters={[
+                  { text: 'Aprovado', value: true },
+                  { text: 'Não aprovado', value: false }
+                ]}
+                onFilter={(value, record) => record.resposta.aprovado === value}
+              />
+              <Column<IEquipe>
                 key="actions"
                 render={(_, record) => (
                   <Space>
