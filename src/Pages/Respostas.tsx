@@ -212,7 +212,7 @@ export default function Respostas(): ReactElement {
             </Col>
             <Col span={24}>
               <Title level={4}>Observação</Title>
-              <Input value={resposta?.observacao} disabled />
+              <Input.TextArea value={resposta?.observacao} disabled />
             </Col>
             <Col span={24}>
               <Title level={4}>Pontuação</Title>
