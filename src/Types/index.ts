@@ -65,6 +65,7 @@ export interface IResposta {
   respostas: {
     resposta: string
   }[]
+  observacao: string
   aprovado: boolean
   aprovadoEm: string
   equipeId: number

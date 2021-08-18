@@ -18,7 +18,8 @@ import {
   Skeleton,
   PageHeader,
   Descriptions,
-  Image
+  Image,
+  Input
 } from 'antd'
 import { AxiosError } from 'axios'
 import { Controller, useForm } from 'react-hook-form'
@@ -208,6 +209,10 @@ export default function Respostas(): ReactElement {
                   }
                 })}
               </Image.PreviewGroup>
+            </Col>
+            <Col span={24}>
+              <Title level={4}>Observação</Title>
+              <Input value={resposta?.observacao} disabled />
             </Col>
             <Col span={24}>
               <Title level={4}>Pontuação</Title>
